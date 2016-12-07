@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="animate.css"/>
+	<style>
+     	*{
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		}
+		img{
+			vertical-align: top;
+		}
+		#box{
+			width: 1366px;
+			height: 770px;
+			border:1px solid #000;
+			position: relative;
+			overflow: hidden;
+		}
+		ul{
+			position: absolute;
+			left: 0;
+			top: 0;
+			
+		}
+		/*.clearfix:after{display:block; clear:both; content:'';};*/
+		ul li{
+			width: 1366px;
+			height: 770px;
+			float: left;
+		}
+		ul li img{
+			width: 1366px;
+			height: 768px;
+		}
+		ul li span{color:#fff; z-index: 2;}
+		ol{
+			position: absolute;
+			top: 0;
+			right: 0px;
+
+		}
+		ol li{
+			width: 20px;
+			height: 20px;
+			background: #ccc;
+			float: left;
+			margin:10px;
+			border-radius:50%;
+			opacity:1;
+			z-index: 2;
+		}
+		ol .on{
+			background: green;
+		}
+		#box a{
+			width: 60px;
+			height: 60px;
+			position: absolute;
+			top: 364px;
+			background: #000;
+			text-decoration: none;
+			font-size: 50px;
+			text-align: center;
+			line-height: 60px;
+			opacity:0;
+			diaplay:none;
+			z-index: 2;
+		}
+		#box a:hover{opacity:0.3;}
+		#next{
+			right: 0;
+		}
+		p{position:absolute; color:#fff; font-size:50px; left:40%; }
+		span{position:absolute; color:#fff; font-size:20px; left:43%; bottom:20%; }
+		.out{width:100%; height:100%; z-index: 1; transform:perspective(800px) rotateY(0deg);  transform-style:preserve-3d; }
+		.out .left{width:100%; height:100%;  left:0; top:0; position:absolute; transform-origin:left center;  transition:2s;}
+		.out .right{width:100%; height:100%;  right:0; top:0; position:absolute;transform-origin:right center; transition:2s;}
+	</style> 
+	<!-- <script src="move.js"></script> -->
+	<script>
+		window.onload = function(){
+		var oBox = document.getElementById('box');
+		var oUl = oBox.children[0];
+		var aLi = oUl.children;
+		var oOl = oBox.children[1];
+		var aBtn = oOl.children;
+		var oPrev = document.getElementById('prev');
+		var oNext = document.getElementById('next');
+		var iNow = 0;
+		var oOut=document.querySelector('.out');
+		oOut.onmouseover=function(){
+			this.children[0].style.transition='10s';
+			this.children[0].style.transform='perspective(800px) rotateY(180deg)';
+			this.children[1].style.transition='10s';
+			this.children[1].style.transform='perspective(800px) rotateY(-180deg)';
+		}
+
+		oUl.innerHTML += oUl.innerHTML;
+		oUl.style.width = aLi[0].offsetWidth*aLi.length+'px';
+
+		var W = oUl.offsetWidth/2;
+
+		// tab
+		function tab(){
+			for(var j=0; j<aBtn.length; j++){
+				aBtn[j].className = '';
+			}
+			aBtn[(iNow%aBtn.length+aBtn.length)%aBtn.length].className = 'on';
+
+			// 运动
+			startMove(oUl,-iNow*aLi[0].offsetWidth);
+			// oUl.style.left = -iNow*aLi[0].offsetWidth+'px';
+
+		}
+
+		// 点
+		for(var i=0; i<aBtn.length; i++){
+			(function(index){
+				aBtn[i].onclick = function(){
+					if(iNow>=0){
+						iNow = parseInt(iNow/aBtn.length)*aBtn.length+index;
+					}
+					if(iNow<0){
+						iNow = -((parseInt(Math.abs(iNow)/aBtn.length)+1)*aBtn.length)+index;
+					}
+					tab();
+					console.log(iNow);
+				}
+			})(i);
+		}
+
+		// 下一个
+		oNext.onclick = function(){
+			iNow++;
+			tab();
+			document.title = iNow;
+		}
+
+		// 上一个
+		oPrev.onclick = function(){
+			iNow--;
+			tab();
+			// document.title = iNow;
+		}
+
+		// 运动
+		var left = 0;
+		var timer = null;
+		function startMove(obj,iTarget){
+			var start = left;
+			var dis = iTarget-start;
+			var count = Math.floor(500/30);
+			var n = 0;
+			clearInterval(timer);
+			timer = setInterval(function(){
+				n++;
+				var a = n/count;
+				left = start+dis*a
+
+				obj.style.left = (left%W-W)%W+'px';
+
+				if(n == count){
+					clearInterval(timer);
+				}
+			},30)
+		}
+	}
+	</script>
+</head>
+<body>
+   <div id="box">
+	   <ul>
+			<li><img src="img/1.jpg" alt=""></li>
+			<li><img src="img/2.jpg" alt=""></li>
+			<li><img src="img/3.jpg" alt=""></li>
+			<li><img src="img/4.jpg" alt=""></li>
+		</ul>
+		<ol>
+			<li class="on"></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ol>
+		<a href="javascript:;" id="prev">&lt;</a>
+		<a href="javascript:;" id="next">&gt;</a>
+		<p>个人作品展</p>
+		<span>人类赖以生存的星球</span>
+		<div class="out box animated jello">
+			<img class="left" src="img/0.jpg" alt="">
+			<img  class="right" src="img/0.jpg" alt="">		
+		</div>
+   </div>
+	
+</body>
+</html>
